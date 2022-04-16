@@ -1,5 +1,5 @@
 import {initializeApp} from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDoc } from 'firebase/firestore';
 import { getAuth, signInWithPopup } from 'firebase/auth';
 import { GoogleAuthProvider } from 'firebase/auth';
 
@@ -12,6 +12,30 @@ const firebaseConfig = {
     appId: "1:493910038145:web:d6a1be257751b0f2a6df80",
     measurementId: "G-X0W2DRQ00H"
   };
+
+  //const db = getFirestore();
+
+  export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if(!userAuth) return;
+    const userRef = await addDoc(`users/${userAuth.uid}`);
+    const snapShot = await userRef.getDoc();
+
+    if(!snapShot.exists) {
+        const { displayName, email } = userAuth;
+        const createdAt = new Date();
+
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            });
+        } catch (error) {
+
+        }
+    }
+  }
 
   const app = initializeApp(firebaseConfig);
 
