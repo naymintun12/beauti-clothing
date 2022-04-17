@@ -1,3 +1,4 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React from "react";
 import { auth, createUserProfileDocument } from "../../firebase/firebase.utils";
 import CustomButton from "../custom-button/custom-button.component";
@@ -23,7 +24,7 @@ class SignUp extends React.Component {
         }
 
         try {
-            const { user } = await auth.createUserWithEmailAndPassword(email, password);
+            const { user } = await createUserWithEmailAndPassword(auth, email, password);
             await createUserProfileDocument(user, {displayName});
             this.setState({
                 displayName: '',
@@ -32,7 +33,9 @@ class SignUp extends React.Component {
             confirmPassword: ''
             })
         }catch(error) {
-
+            const errorCode = error.code();
+            const errorMessage = error.message();
+            console.log(errorCode, errorMessage);
         }
     }
 
